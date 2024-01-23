@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recipe App</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="src/style.css" />
+  </head>
+  <body>
+    <div class="background">
+      <h3>Find your recipes here</h3>
+      <br />
+      <div style="display: block; margin-bottom: 5px">
+        <input id="input-query" type="text" />
+        <button
+          id="search-btn"
+          onclick="
+          get_recipe();
+        "
+        >
+          Search
+        </button>
+      </div>
+      <p>Your Search Results</p>
+      <div class="container">
+        <div
+          id="stuff"
+          style="display: flex; flex-wrap: wrap; flex-direction: row"
+        ></div>
+      </div>
+    </div>
+    <script>
+      //   const applicationID = "4ad29ef2";
+      //   const APIkey = "e6abbb362cce06aaf00b22d4cbffc381";
+      //   const body = document.body.innerHTML;
+      const baseURL = "https://www.themealdb.com/api/json/v1/1/search.php?s="; //"https://api.edamam.com/api/recipes/v2";
+      let input = document.getElementById("input-query");
+      input.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          document.getElementById("search-btn").click();
+        }
+      });
+      async function get_recipe() {
+        // document.body.innerHTML = body;
+        const inputQueryObj = document.querySelector("#input-query");
+        const inputQuery = inputQueryObj.value;
+        // console.log(inputQuery);
+        inputQueryObj.value = "";
+        // const url = `${baseURL}?type=public&q=${inputQuery}&app_id=${applicationID}&app_key=${APIkey}`;
+        const url = baseURL + inputQuery;
+        const everyRecipe = await fetch(url).then((response) =>
+          response.json()
+        );
+        console.log(everyRecipe);
+        // const hits = everyRecipe.hits;
+        const meals = everyRecipe.meals;
+        let container = document.getElementById("stuff");
+        container.innerHTML = "";
+        for (let idx = 0; idx <= meals.length; idx++) {
+          if (meals[idx]) {
+            var newCard = document.createElement("div");
+            newCard.className = "card";
+            newCard.style.width = "18rem";
+            let src = meals[idx].strMealThumb;
+            let mealTitle = meals[idx].strMeal;
+            let mealType = meals[idx].strArea;
+            let dishType = meals[idx].strCategory;
+            let source = meals[idx].strSource;
+            newCard.innerHTML = `
+                <img
+                src=${src}
+                class="card-img-top"
+                alt="image"
+                />
+                <div class="card-body">
+                <h5 class="card-title">${mealTitle}</h5>
+                <p class="card-text">
+                    <b>Cuisine Type</b>: ${mealType}<br>
+                        <b>Dish Type</b>: ${dishType}
+                </p>
+                <div class="accordion accordion-flush" id="${meals[idx].idMeal}"">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseOne"
+                aria-expanded="false"
+                aria-controls="flush-collapseOne"
+              >
+                Recipe
+              </button>
+            </h2>
+            <div
+              id="flush-collapseOne"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionFlushExample"
+            >
+              <div class="accordion-body">something</div>
+            </div>
+          </div>
+        </div>
+                <button id="new-html" ><a href="${source}" target="_blank" style="text-decoration: none;">To the source</a></button>
+                </div>
+            `;
+            container.appendChild(newCard);
+          }
+        }
+      }
+    </script>
+    <script
+    src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+    integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+    crossorigin="anonymous"
+  ></script>
+  </body>
+</html>
